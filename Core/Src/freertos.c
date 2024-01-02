@@ -28,6 +28,7 @@
 
 #include "relocate.h"
 #include "tim.h"
+#include "stm32f4xx_hal_tim.h"
 
 
 /* USER CODE END Includes */
@@ -130,7 +131,6 @@ void MX_FREERTOS_Init(void) {
 /* USER CODE END Header_StartComTask */
 void StartComTask(void *argument)
 {
-	static uint16_t s;
   /* USER CODE BEGIN StartComTask */
   /* Infinite loop */
   for(;;)
@@ -138,8 +138,12 @@ void StartComTask(void *argument)
 	// printf("ON Com Task\n");
   //   osDelay(1000);
 	// printf("Com Task END\n");
+  __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 250);
+  osDelay(2000);
   printf("freq: %f, duty: %f\n", freq, duty);
-  osDelay(10);
+  __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 500);
+  osDelay(2000);
+  printf("freq: %f, duty: %f\n", freq, duty);
   }
   /* USER CODE END StartComTask */
 }

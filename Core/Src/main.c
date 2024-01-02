@@ -26,11 +26,10 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
-#include "relocate.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "relocate.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
