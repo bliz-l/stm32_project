@@ -166,7 +166,14 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_TIM_IC_Capture(TIM_HandleTypeDef *htim)
+{
+	
+	if(htim->Instance == TIM2)
+	{
+		
+	}
+}
 /* USER CODE END 4 */
 
 /**
