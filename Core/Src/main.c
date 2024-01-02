@@ -26,6 +26,7 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
+#include "relocate.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -49,7 +50,10 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+uint16_t period_cnt = 0;
+uint16_t delta_cnt = 0;
+float freq = 0; 
+float duty = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -102,6 +106,10 @@ int main(void)
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+  HAL_TIM_Base_Start_IT(&htim2);
+  HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
+  HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_2);
+
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -166,13 +174,26 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_TIM_IC_Capture(TIM_HandleTypeDef *htim)
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
-	
-	if(htim->Instance == TIM2)
-	{
-		
-	}
+    if(htim->Instance == TIM2)
+    {
+        if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
+        {
+            period_cnt = HAL_TIM_ReadCapturedValue(htim,TIM_CHANNEL_1)+1;
+            freq = 1000000 / period_cnt;
+            duty = (float)delta_cnt / period_cnt*100;
+            
+        }
+        
+        else if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2)
+        {
+            delta_cnt =  HAL_TIM_ReadCapturedValue(htim,TIM_CHANNEL_2)+1;
+        }
+        
+        
+    }
+
 }
 /* USER CODE END 4 */
 

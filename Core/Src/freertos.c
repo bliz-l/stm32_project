@@ -27,6 +27,8 @@
 /* USER CODE BEGIN Includes */
 
 #include "relocate.h"
+#include "tim.h"
+
 
 /* USER CODE END Includes */
 
@@ -48,6 +50,8 @@
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
 static uint16_t record;
+extern float freq; 
+extern float duty;
 /* USER CODE END Variables */
 /* Definitions for ComTask */
 osThreadId_t ComTaskHandle;
@@ -126,13 +130,16 @@ void MX_FREERTOS_Init(void) {
 /* USER CODE END Header_StartComTask */
 void StartComTask(void *argument)
 {
+	static uint16_t s;
   /* USER CODE BEGIN StartComTask */
   /* Infinite loop */
   for(;;)
   {
-	printf("ON Com Task\n");
-    osDelay(1000);
-	printf("Com Task END\n");
+	// printf("ON Com Task\n");
+  //   osDelay(1000);
+	// printf("Com Task END\n");
+  printf("freq: %f, duty: %f\n", freq, duty);
+  osDelay(10);
   }
   /* USER CODE END StartComTask */
 }
