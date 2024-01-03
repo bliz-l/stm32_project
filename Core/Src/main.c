@@ -53,6 +53,7 @@ uint16_t period_cnt = 0;
 uint16_t delta_cnt = 0;
 float freq = 0; 
 float duty = 0;
+uint32_t dac_output = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -108,6 +109,8 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim2);
   HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
   HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_2);
+  //DMA控制DAC输出值
+  HAL_DAC_Start_DMA(&hdac, DAC_CHANNEL_1, (uint32_t*)dac_output, 1, DAC_ALIGN_12B_R);
 
   /* USER CODE END 2 */
 

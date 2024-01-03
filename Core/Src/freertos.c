@@ -53,6 +53,8 @@
 static uint16_t record;
 extern float freq; 
 extern float duty;
+extern uint32_t dac_output;
+static float factor = 1;
 /* USER CODE END Variables */
 /* Definitions for ComTask */
 osThreadId_t ComTaskHandle;
@@ -135,15 +137,23 @@ void StartComTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-	// printf("ON Com Task\n");
-  //   osDelay(1000);
-	// printf("Com Task END\n");
-  __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 250);
-  osDelay(2000);
-  printf("freq: %f, duty: %f\n", freq, duty);
-  __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 500);
-  osDelay(2000);
-  printf("freq: %f, duty: %f\n", freq, duty);
+  //TEST DAC output
+  if(dac_output < 4095) 
+  {
+    dac_output += 1;
+  }
+  else 
+  {
+    dac_output = 0;
+  }
+  
+  osDelay(1);
+  // __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 250);
+  // osDelay(2000);
+  // printf("freq: %f, duty: %f\n", freq, duty);
+  // __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 500);
+  // osDelay(2000);
+  // printf("freq: %f, duty: %f\n", freq, duty);
   }
   /* USER CODE END StartComTask */
 }
@@ -162,7 +172,7 @@ void StartMainTask(void *argument)
   for(;;)
   {
 	HAL_GPIO_TogglePin(LED_SIG_GPIO_Port, LED_SIG_Pin);
-	printf("²âÊÔÒ»ÏÂ°É£¡\n");
+	printf("TEST_LED_ONCE\n");
 	printf("R\n");
     osDelay(2000);
   }
