@@ -140,14 +140,14 @@ void StartComTask(void *argument)
   //TEST DAC output
   if(dac_output < 4095) 
   {
-    dac_output += 1;
+    dac_output += 100;
   }
   else 
   {
     dac_output = 0;
   }
-  
-  osDelay(1);
+  printf("dac value: %d", dac_output);
+  osDelay(100);
   // __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 250);
   // osDelay(2000);
   // printf("freq: %f, duty: %f\n", freq, duty);

@@ -104,13 +104,15 @@ int main(void)
   MX_TIM6_Init();
   MX_ADC1_Init();
   MX_TIM3_Init();
+  MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
   HAL_TIM_Base_Start_IT(&htim2);
+  HAL_TIM_Base_Start_IT(&htim4);
   HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
   HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_2);
-  //DMA控制DAC输出值
-  HAL_DAC_Start_DMA(&hdac, DAC_CHANNEL_1, (uint32_t*)dac_output, 1, DAC_ALIGN_12B_R);
+  
+  HAL_DAC_Start_DMA(&hdac, DAC_CHANNEL_1, &dac_output, 1, DAC_ALIGN_12B_R);
 
   /* USER CODE END 2 */
 
