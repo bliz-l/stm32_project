@@ -138,21 +138,21 @@ void StartComTask(void *argument)
   for(;;)
   {
   //TEST DAC output
-  if(dac_output < 4095) 
-  {
-    dac_output += 100;
-  }
-  else 
-  {
-    dac_output = 0;
-  }
-  printf("dac value: %d", dac_output);
-  osDelay(100);
+  // if(dac_output < 4095) 
+  // {
+  //   dac_output += 100;
+  // }
+  // else 
+  // {
+  //   dac_output = 0;
+  // }
+  // printf("dac value: %d", dac_output);
+  // osDelay(100);
   // __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 250);
   // osDelay(2000);
-  // printf("freq: %f, duty: %f\n", freq, duty);
+  printf("freq: %f, duty: %f\n", freq, duty);
   // __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 500);
-  // osDelay(2000);
+  osDelay(2000);
   // printf("freq: %f, duty: %f\n", freq, duty);
   }
   /* USER CODE END StartComTask */

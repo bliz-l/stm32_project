@@ -53,7 +53,7 @@ uint16_t period_cnt = 0;
 uint16_t delta_cnt = 0;
 float freq = 0; 
 float duty = 0;
-uint32_t dac_output = 0;
+uint32_t dac_output = 500;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -185,7 +185,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
         if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
         {
             period_cnt = HAL_TIM_ReadCapturedValue(htim,TIM_CHANNEL_1)+1;
-            freq = 1000000 / period_cnt;
+            freq = 1000000 / (float)period_cnt;
             duty = (float)delta_cnt / period_cnt*100;
             
         }
