@@ -54,6 +54,7 @@ uint16_t delta_cnt = 0;
 float freq = 0; 
 float duty = 0;
 uint32_t dac_output = 500;
+uint16_t change_flag = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -193,6 +194,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
         else if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2)
         {
             delta_cnt =  HAL_TIM_ReadCapturedValue(htim,TIM_CHANNEL_2)+1;
+			change_flag = 1;
         }
         
         

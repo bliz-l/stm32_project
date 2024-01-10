@@ -29,13 +29,12 @@
 #include "relocate.h"
 #include "tim.h"
 #include "stm32f4xx_hal_tim.h"
-
+#include "pid.h"
 
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -50,11 +49,13 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-static uint16_t record;
+static uint16_t dt_period = 100;
 extern float freq; 
 extern float duty;
 extern uint32_t dac_output;
-static float factor = 1;
+extern uint16_t change_flag;
+static float factor = 12;
+static uint32_t dt = 0;
 /* USER CODE END Variables */
 /* Definitions for ComTask */
 osThreadId_t ComTaskHandle;
@@ -150,9 +151,30 @@ void StartComTask(void *argument)
   // osDelay(100);
   // __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 250);
   // osDelay(2000);
-  printf("freq: %f, duty: %f\n", freq, duty);
+	printf("freq: %f, duty: %f,DAC_OUT: %d\n,change_flag: %d", freq, duty, dac_output,change_flag);
+	if(change_flag == 0) {
+		dt += dt_period;
+		if(dt > 1000) {
+			dt = 1000;
+		}
+		continue;
+	}
+    static struct pid_params pid;
+	init_pid(&pid, -10, 0.01,0.01);
+	float pid_output = update(&pid, duty, dt_period);
+	printf("pid_output = %f,change_flag:%d", pid_output,change_flag);
+	dt = 0;
+	dac_output = dac_output + pid_output;
+	change_flag = 0;
+	if(dac_output < 148) {
+		dac_output = 148;
+	}
+	if(dac_output > 4095) {
+		dac_output = 4095;
+	}
+  //printf("freq: %f, duty: %f,DAC_OUT: %d\n", freq, duty, dac_output);
   // __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 500);
-  osDelay(2000);
+  osDelay(100);
   // printf("freq: %f, duty: %f\n", freq, duty);
   }
   /* USER CODE END StartComTask */
@@ -177,7 +199,7 @@ void StartMainTask(void *argument)
     osDelay(2000);
   }
   /* USER CODE END StartMainTask */
-}
+} 
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
