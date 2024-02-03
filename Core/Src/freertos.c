@@ -49,13 +49,14 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-static uint16_t dt_period = 100;
+static float dt_period = 0.1;
+static float dt = 0;
 extern float freq; 
 extern float duty;
 extern uint32_t dac_output;
 extern uint16_t change_flag;
-static float factor = 12;
-static uint32_t dt = 0;
+static struct pid_params pid;
+static float setPoint = 30;
 /* USER CODE END Variables */
 /* Definitions for ComTask */
 osThreadId_t ComTaskHandle;
@@ -89,7 +90,8 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-
+  init_pid(&pid, 5, 0,0,setPoint);
+	
   /* USER CODE END Init */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -151,30 +153,38 @@ void StartComTask(void *argument)
   // osDelay(100);
   // __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 250);
   // osDelay(2000);
-	printf("freq: %f, duty: %f,DAC_OUT: %d\n,change_flag: %d", freq, duty, dac_output,change_flag);
-	if(change_flag == 0) {
-		dt += dt_period;
-		if(dt > 1000) {
-			dt = 1000;
-		}
-		continue;
-	}
-    static struct pid_params pid;
-	init_pid(&pid, -10, 0.01,0.01);
-	float pid_output = update(&pid, duty, dt_period);
-	printf("pid_output = %f,change_flag:%d", pid_output,change_flag);
-	dt = 0;
-	dac_output = dac_output + pid_output;
-	change_flag = 0;
+  printf("BASIC:freq: %f, duty: %f,DAC_OUT: %d,change_flag: %d\n", freq, duty, dac_output,change_flag);
+
+
+  if(change_flag == 1) {
+
+    float pid_output = update(&pid, duty, dt);
+	printf("CHANGE: pid_output = %f,change_flag:%d, pid_integral:%f, pid_lasterror:%f\n", pid.output,change_flag, pid.integral, pid.last_error);
+	
+	printf("PID_PARAMS: Kp = %f, Ki = %f, Kd = %f\n", pid.kp, pid.ki,pid.kd);
+	  
+	dac_output = dac_output - pid.output;
 	if(dac_output < 148) {
-		dac_output = 148;
+	    	dac_output = 148;
 	}
 	if(dac_output > 4095) {
 		dac_output = 4095;
 	}
+    change_flag = 0;
+	dt = dt_period;
+  }
+  else
+  {
+	  dt += dt_period;
+	  if(dt > 1)
+	  {
+		  dt = 1;
+	  }
+  }
+
   //printf("freq: %f, duty: %f,DAC_OUT: %d\n", freq, duty, dac_output);
   // __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 500);
-  osDelay(100);
+  osDelay(10);
   // printf("freq: %f, duty: %f\n", freq, duty);
   }
   /* USER CODE END StartComTask */
@@ -199,7 +209,7 @@ void StartMainTask(void *argument)
     osDelay(2000);
   }
   /* USER CODE END StartMainTask */
-} 
+}
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
